@@ -114,8 +114,8 @@ const ReceiveIndent = () => {
                 </div>
             </div>
 
-            {/* Table Area */}
-            <div className="flex-1 bg-white/90 backdrop-blur-sm border border-sky-100 rounded-2xl shadow-lg overflow-hidden flex flex-col">
+            {/* Desktop Table Area */}
+            <div className="hidden lg:flex flex-1 bg-white/90 backdrop-blur-sm border border-sky-100 rounded-2xl shadow-lg overflow-hidden flex-col">
                 <div className="overflow-x-auto flex-1">
                     <table className="w-full text-sm text-left">
                         <thead className="bg-sky-50 text-sky-700 font-medium border-b border-sky-100 sticky top-0 z-10">
@@ -167,6 +167,47 @@ const ReceiveIndent = () => {
                         </div>
                     )}
                 </div>
+            </div>
+
+            {/* Mobile Card View */}
+            <div className="lg:hidden flex-1 overflow-y-auto space-y-4 pb-4">
+                {filteredIndents.map((item) => (
+                    <div key={item.id} className="bg-white rounded-2xl border border-sky-100 shadow-sm p-4 space-y-4">
+                        <div className="flex justify-between items-start border-b border-slate-50 pb-3">
+                            <div>
+                                <div className="flex items-center gap-2">
+                                    <span className="text-[10px] font-bold text-sky-600 bg-sky-50 px-2 py-0.5 rounded-full uppercase">Ref: {item.serialNo}</span>
+                                    <span className="text-[10px] font-bold text-slate-500 bg-slate-50 px-2 py-0.5 rounded-full uppercase">{item.sku}</span>
+                                </div>
+                                <h3 className="font-bold text-slate-800 mt-2">{item.name}</h3>
+                                <p className="text-[10px] text-slate-400 font-bold uppercase mt-1">Requested: {item.timestamp}</p>
+                            </div>
+                            <span className="bg-sky-100 text-sky-700 px-3 py-1 rounded-xl text-xs font-bold">
+                                {item.unit}
+                            </span>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4 text-sm">
+                            <div className="bg-slate-50/50 p-2.5 rounded-xl">
+                                <label className="text-[10px] font-bold text-slate-400 uppercase block mb-1">Stock Level</label>
+                                <span className={`font-bold ${item.closingStock <= (item.maxLevel * 0.2) ? 'text-rose-500' : 'text-emerald-600'}`}>
+                                    {item.closingStock} / {item.maxLevel}
+                                </span>
+                            </div>
+                            <div className="bg-slate-50/50 p-2.5 rounded-xl">
+                                <label className="text-[10px] font-bold text-slate-400 uppercase block mb-1">Reorder Qty</label>
+                                <span className="text-slate-700 font-bold">{item.reorderQty}</span>
+                            </div>
+                        </div>
+                    </div>
+                ))}
+
+                {filteredIndents.length === 0 && (
+                    <div className="text-center py-12 text-slate-400 bg-white rounded-2xl border border-sky-100 shadow-sm">
+                        <Box size={32} className="mx-auto mb-3 opacity-50" />
+                        <p className="text-sm">No indents found.</p>
+                    </div>
+                )}
             </div>
         </div>
     );
