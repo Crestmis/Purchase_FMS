@@ -92,10 +92,25 @@ const GetQuotation = () => {
         });
     };
 
-    const combinedData = [...pendingIndents, ...historyIndents];
-    const uniqueNames = [...new Set(combinedData.map(item => item.name))].sort();
-    const uniqueSkus = [...new Set(combinedData.map(item => item.sku))].sort();
-    const uniqueMaxLevels = [...new Set(combinedData.map(item => item.maxLevel))].sort((a, b) => a - b);
+    const currentTabData = activeTab === 'pending' ? pendingIndents : historyIndents;
+    const uniqueNames = [...new Set(currentTabData.map(item => item.name))].sort();
+    const uniqueSkus = [...new Set(currentTabData.map(item => item.sku))].sort();
+    const uniqueMaxLevels = [...new Set(currentTabData.map(item => item.maxLevel))].sort((a, b) => a - b);
+
+    useEffect(() => {
+        setItemNameFilter('All');
+        setSkuFilter('All');
+        setMaxLevelFilter('All');
+        setSearchTerm('');
+        setSortConfig({ key: null, direction: 'asc' });
+    }, [activeTab]);
+
+        const toggleSort = (key) => {
+        setSortConfig(prev => ({
+            key,
+            direction: prev.key === key && prev.direction === 'asc' ? 'desc' : 'asc'
+        }));
+    };
 
     const handleSort = (key, direction) => {
         setSortConfig({ key, direction });
@@ -116,27 +131,17 @@ const GetQuotation = () => {
     const filteredPending = sortData(filterData(pendingIndents));
     const filteredHistory = sortData(filterData(historyIndents));
 
-    const SortDropdown = ({ columnKey }) => (
-        <div className="relative group inline-block ml-1">
-            <button className="p-0.5 hover:bg-sky-200 rounded transition-colors text-sky-600">
-                <ChevronDown size={14} />
-            </button>
-            <div className="absolute left-0 top-full mt-1 hidden group-hover:block bg-white border border-sky-100 rounded-lg shadow-xl z-20 min-w-[120px] overflow-hidden text-sm">
-                <button 
-                    onClick={() => handleSort(columnKey, 'asc')}
-                    className="w-full text-left px-3 py-2 hover:bg-sky-50 text-[10px] font-bold uppercase tracking-wider text-slate-600 flex items-center gap-2"
-                >
-                    <ArrowUp size={12} className="text-sky-500" /> Ascending
-                </button>
-                <button 
-                    onClick={() => handleSort(columnKey, 'desc')}
-                    className="w-full text-left px-3 py-2 hover:bg-sky-50 text-[10px] font-bold uppercase tracking-wider text-slate-600 flex items-center gap-2"
-                >
-                    <ArrowDown size={12} className="text-sky-500" /> Descending
-                </button>
-            </div>
-        </div>
-    );
+        const SortDropdown = ({ columnKey }) => {
+        if (sortConfig.key !== columnKey) return null;
+        return (
+            <span className="inline-flex items-center ml-1">
+                {sortConfig.direction === 'asc' 
+                    ? <ArrowUp size={14} className="text-sky-600" />
+                    : <ArrowDown size={14} className="text-sky-600" />
+                }
+            </span>
+        );
+    };
 
     return (
         <div className="h-full flex flex-col p-4 lg:p-6 space-y-4">
@@ -256,9 +261,9 @@ const GetQuotation = () => {
             {/* Content Area */}
             <div className="flex-1 flex flex-col min-h-0 animate-in fade-in duration-300">
                 {activeTab === 'pending' ? (
-                    <PendingQuotation indents={filteredPending} onProcess={processIndent} SortDropdown={SortDropdown} />
+                    <PendingQuotation indents={filteredPending} onProcess={processIndent} SortDropdown={SortDropdown} onSort={toggleSort} sortConfig={sortConfig} />
                 ) : (
-                    <HistoryQuotation indents={filteredHistory} SortDropdown={SortDropdown} />
+                    <HistoryQuotation indents={filteredHistory} SortDropdown={SortDropdown} onSort={toggleSort} sortConfig={sortConfig} />
                 )}
             </div>
         </div>

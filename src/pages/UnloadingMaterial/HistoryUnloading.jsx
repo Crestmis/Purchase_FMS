@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, CheckCircle } from 'lucide-react';
 
-const HistoryUnloading = ({ indents, SortDropdown }) => {
+const HistoryUnloading = ({ indents, SortDropdown, onSort }) => {
     return (
         <div className="flex-1 bg-white/90 backdrop-blur-sm border border-sky-100 rounded-2xl shadow-lg overflow-hidden flex flex-col">
             {/* Desktop Table View */}
@@ -9,47 +9,74 @@ const HistoryUnloading = ({ indents, SortDropdown }) => {
                 <table className="w-full text-sm text-left">
                     <thead className="bg-sky-50 text-sky-700 font-medium border-b border-sky-100 sticky top-0 z-10">
                         <tr>
-                            <th className="px-4 py-3 whitespace-nowrap">
+                            <th 
+                                className="px-4 py-3 whitespace-nowrap cursor-pointer hover:bg-sky-100 transition-colors select-none"
+                                onClick={() => onSort("status")}
+                            >
                                 <div className="flex items-center">
                                     Status <SortDropdown columnKey="status" />
                                 </div>
                             </th>
-                            <th className="px-4 py-3 whitespace-nowrap">
+                            <th 
+                                className="px-4 py-3 whitespace-nowrap cursor-pointer hover:bg-sky-100 transition-colors select-none"
+                                onClick={() => onSort("storageLocation")}
+                            >
                                 <div className="flex items-center">
                                     Storage Location <SortDropdown columnKey="storageLocation" />
                                 </div>
                             </th>
-                            <th className="px-4 py-3 whitespace-nowrap">
+                            <th 
+                                className="px-4 py-3 whitespace-nowrap cursor-pointer hover:bg-sky-100 transition-colors select-none"
+                                onClick={() => onSort("unloadedQty")}
+                            >
                                 <div className="flex items-center">
                                     Unloaded Qty <SortDropdown columnKey="unloadedQty" />
                                 </div>
                             </th>
-                            <th className="px-4 py-3 whitespace-nowrap">
+                            <th 
+                                className="px-4 py-3 whitespace-nowrap cursor-pointer hover:bg-sky-100 transition-colors select-none"
+                                onClick={() => onSort("invoiceNo")}
+                            >
                                 <div className="flex items-center">
                                     Invoice No <SortDropdown columnKey="invoiceNo" />
                                 </div>
                             </th>
-                            <th className="px-4 py-3 whitespace-nowrap">
+                            <th 
+                                className="px-4 py-3 whitespace-nowrap cursor-pointer hover:bg-sky-100 transition-colors select-none"
+                                onClick={() => onSort("vehicleNo")}
+                            >
                                 <div className="flex items-center">
                                     Vehicle No <SortDropdown columnKey="vehicleNo" />
                                 </div>
                             </th>
-                            <th className="px-4 py-3 whitespace-nowrap">
+                            <th 
+                                className="px-4 py-3 whitespace-nowrap cursor-pointer hover:bg-sky-100 transition-colors select-none"
+                                onClick={() => onSort("serialNo")}
+                            >
                                 <div className="flex items-center">
                                     Serial No <SortDropdown columnKey="serialNo" />
                                 </div>
                             </th>
-                            <th className="px-4 py-3 whitespace-nowrap">
+                            <th 
+                                className="px-4 py-3 whitespace-nowrap cursor-pointer hover:bg-sky-100 transition-colors select-none"
+                                onClick={() => onSort("vendorName")}
+                            >
                                 <div className="flex items-center">
                                     Vendor <SortDropdown columnKey="vendorName" />
                                 </div>
                             </th>
-                            <th className="px-4 py-3 whitespace-nowrap">
+                            <th 
+                                className="px-4 py-3 whitespace-nowrap cursor-pointer hover:bg-sky-100 transition-colors select-none"
+                                onClick={() => onSort("sku")}
+                            >
                                 <div className="flex items-center">
                                     SKU Code <SortDropdown columnKey="sku" />
                                 </div>
                             </th>
-                            <th className="px-4 py-3 whitespace-nowrap">
+                            <th 
+                                className="px-4 py-3 whitespace-nowrap cursor-pointer hover:bg-sky-100 transition-colors select-none"
+                                onClick={() => onSort("name")}
+                            >
                                 <div className="flex items-center">
                                     Item Name <SortDropdown columnKey="name" />
                                 </div>

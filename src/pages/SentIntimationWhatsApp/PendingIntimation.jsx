@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Box, Send } from 'lucide-react';
 import IntimationForm from './IntimationForm';
 
-const PendingIntimation = ({ indents, onProcess, SortDropdown }) => {
+const PendingIntimation = ({ indents, onProcess, SortDropdown, onSort }) => {
     const [selectedIndent, setSelectedIndent] = useState(null);
 
     return (
@@ -13,32 +13,50 @@ const PendingIntimation = ({ indents, onProcess, SortDropdown }) => {
                     <thead className="bg-sky-50 text-sky-700 font-medium border-b border-sky-100 sticky top-0 z-10">
                         <tr>
                             <th className="px-4 py-3 text-center whitespace-nowrap">Action</th>
-                            <th className="px-4 py-3 whitespace-nowrap">
+                            <th 
+                                className="px-4 py-3 whitespace-nowrap cursor-pointer hover:bg-sky-100 transition-colors select-none"
+                                onClick={() => onSort("serialNo")}
+                            >
                                 <div className="flex items-center">
                                     Serial No <SortDropdown columnKey="serialNo" />
                                 </div>
                             </th>
-                            <th className="px-4 py-3 whitespace-nowrap">
+                            <th 
+                                className="px-4 py-3 whitespace-nowrap cursor-pointer hover:bg-sky-100 transition-colors select-none"
+                                onClick={() => onSort("vendorName")}
+                            >
                                 <div className="flex items-center">
                                     Vendor <SortDropdown columnKey="vendorName" />
                                 </div>
                             </th>
-                            <th className="px-4 py-3 whitespace-nowrap">
+                            <th 
+                                className="px-4 py-3 whitespace-nowrap cursor-pointer hover:bg-sky-100 transition-colors select-none"
+                                onClick={() => onSort("quotedPrice")}
+                            >
                                 <div className="flex items-center">
                                     Quote (₹) <SortDropdown columnKey="quotedPrice" />
                                 </div>
                             </th>
-                            <th className="px-4 py-3 whitespace-nowrap">
+                            <th 
+                                className="px-4 py-3 whitespace-nowrap cursor-pointer hover:bg-sky-100 transition-colors select-none"
+                                onClick={() => onSort("sku")}
+                            >
                                 <div className="flex items-center">
                                     SKU Code <SortDropdown columnKey="sku" />
                                 </div>
                             </th>
-                            <th className="px-4 py-3 whitespace-nowrap">
+                            <th 
+                                className="px-4 py-3 whitespace-nowrap cursor-pointer hover:bg-sky-100 transition-colors select-none"
+                                onClick={() => onSort("name")}
+                            >
                                 <div className="flex items-center">
                                     Item Name <SortDropdown columnKey="name" />
                                 </div>
                             </th>
-                            <th className="px-4 py-3 whitespace-nowrap">
+                            <th 
+                                className="px-4 py-3 whitespace-nowrap cursor-pointer hover:bg-sky-100 transition-colors select-none"
+                                onClick={() => onSort("reorderQty")}
+                            >
                                 <div className="flex items-center">
                                     Reorder Qty <SortDropdown columnKey="reorderQty" />
                                 </div>

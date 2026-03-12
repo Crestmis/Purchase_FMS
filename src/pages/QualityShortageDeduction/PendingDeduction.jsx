@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Box, Percent } from 'lucide-react';
 import DeductionForm from './DeductionForm';
 
-const PendingDeduction = ({ indents, onProcess, SortDropdown }) => {
+const PendingDeduction = ({ indents, onProcess, SortDropdown, onSort }) => {
     const [selectedIndent, setSelectedIndent] = useState(null);
 
     return (
@@ -13,32 +13,50 @@ const PendingDeduction = ({ indents, onProcess, SortDropdown }) => {
                     <thead className="bg-sky-50 text-sky-700 font-medium border-b border-sky-100 sticky top-0 z-10">
                         <tr>
                             <th className="px-4 py-3 text-center whitespace-nowrap">Action</th>
-                            <th className="px-4 py-3 whitespace-nowrap">
+                            <th 
+                                className="px-4 py-3 whitespace-nowrap cursor-pointer hover:bg-sky-100 transition-colors select-none"
+                                onClick={() => onSort("serialNo")}
+                            >
                                 <div className="flex items-center">
                                     Serial No <SortDropdown columnKey="serialNo" />
                                 </div>
                             </th>
-                            <th className="px-4 py-3 whitespace-nowrap">
+                            <th 
+                                className="px-4 py-3 whitespace-nowrap cursor-pointer hover:bg-sky-100 transition-colors select-none"
+                                onClick={() => onSort("invoiceNo")}
+                            >
                                 <div className="flex items-center">
                                     Invoice No <SortDropdown columnKey="invoiceNo" />
                                 </div>
                             </th>
-                            <th className="px-4 py-3 whitespace-nowrap">
+                            <th 
+                                className="px-4 py-3 whitespace-nowrap cursor-pointer hover:bg-sky-100 transition-colors select-none"
+                                onClick={() => onSort("vendorName")}
+                            >
                                 <div className="flex items-center">
                                     Vendor <SortDropdown columnKey="vendorName" />
                                 </div>
                             </th>
-                            <th className="px-4 py-3 whitespace-nowrap">
+                            <th 
+                                className="px-4 py-3 whitespace-nowrap cursor-pointer hover:bg-sky-100 transition-colors select-none"
+                                onClick={() => onSort("sku")}
+                            >
                                 <div className="flex items-center">
                                     SKU Code <SortDropdown columnKey="sku" />
                                 </div>
                             </th>
-                            <th className="px-4 py-3 whitespace-nowrap">
+                            <th 
+                                className="px-4 py-3 whitespace-nowrap cursor-pointer hover:bg-sky-100 transition-colors select-none"
+                                onClick={() => onSort("name")}
+                            >
                                 <div className="flex items-center">
                                     Item Name <SortDropdown columnKey="name" />
                                 </div>
                             </th>
-                            <th className="px-4 py-3 whitespace-nowrap">
+                            <th 
+                                className="px-4 py-3 whitespace-nowrap cursor-pointer hover:bg-sky-100 transition-colors select-none"
+                                onClick={() => onSort("unloadedQty")}
+                            >
                                 <div className="flex items-center">
                                     Unloaded Qty <SortDropdown columnKey="unloadedQty" />
                                 </div>

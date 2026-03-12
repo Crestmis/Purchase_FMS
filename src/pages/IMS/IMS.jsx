@@ -131,6 +131,13 @@ const IMS = () => {
     const uniqueSkus = [...new Set(imsData.map(item => item.sku))].sort();
     const uniqueMaxLevels = [...new Set(imsData.map(item => item.maxLevel))].sort((a, b) => a - b);
 
+        const toggleSort = (key) => {
+        setSortConfig(prev => ({
+            key,
+            direction: prev.key === key && prev.direction === 'asc' ? 'desc' : 'asc'
+        }));
+    };
+
     const handleSort = (key, direction) => {
         setSortConfig({ key, direction });
     };
@@ -145,27 +152,17 @@ const IMS = () => {
         return 0;
     });
 
-    const SortDropdown = ({ columnKey }) => (
-        <div className="relative group inline-block ml-1">
-            <button className="p-0.5 hover:bg-sky-200 rounded transition-colors text-sky-600">
-                <ChevronDown size={14} />
-            </button>
-            <div className="absolute left-0 top-full mt-1 hidden group-hover:block bg-white border border-sky-100 rounded-lg shadow-xl z-20 min-w-[120px] overflow-hidden">
-                <button 
-                    onClick={() => handleSort(columnKey, 'asc')}
-                    className="w-full text-left px-3 py-2 hover:bg-sky-50 text-[10px] font-bold uppercase tracking-wider text-slate-600 flex items-center gap-2"
-                >
-                    <ArrowUp size={12} className="text-sky-500" /> Ascending
-                </button>
-                <button 
-                    onClick={() => handleSort(columnKey, 'desc')}
-                    className="w-full text-left px-3 py-2 hover:bg-sky-50 text-[10px] font-bold uppercase tracking-wider text-slate-600 flex items-center gap-2"
-                >
-                    <ArrowDown size={12} className="text-sky-500" /> Descending
-                </button>
-            </div>
-        </div>
-    );
+        const SortDropdown = ({ columnKey }) => {
+        if (sortConfig.key !== columnKey) return null;
+        return (
+            <span className="inline-flex items-center ml-1">
+                {sortConfig.direction === 'asc' 
+                    ? <ArrowUp size={14} className="text-sky-600" />
+                    : <ArrowDown size={14} className="text-sky-600" />
+                }
+            </span>
+        );
+    };
 
     return (
         <div className="h-full flex flex-col p-4 lg:p-6 space-y-4">
@@ -288,46 +285,70 @@ const IMS = () => {
                         <thead className="bg-sky-50 text-sky-700 font-medium border-b border-sky-100 sticky top-0 z-10">
                             <tr>
                                 <th className="px-4 py-3 text-center whitespace-nowrap">Action</th>
-                                <th className="px-4 py-3 whitespace-nowrap">
-                                    <div className="flex items-center">
-                                        Serial NO <SortDropdown columnKey="serial" />
-                                    </div>
-                                </th>
-                                <th className="px-4 py-3 whitespace-nowrap">
-                                    <div className="flex items-center">
-                                        SKU Code <SortDropdown columnKey="sku" />
-                                    </div>
-                                </th>
-                                <th className="px-4 py-3 whitespace-nowrap">
-                                    <div className="flex items-center">
-                                        Item Name <SortDropdown columnKey="name" />
-                                    </div>
-                                </th>
-                                <th className="px-4 py-3 whitespace-nowrap">
-                                    <div className="flex items-center">
-                                        Unit <SortDropdown columnKey="unit" />
-                                    </div>
-                                </th>
-                                <th className="px-4 py-3 whitespace-nowrap">
-                                    <div className="flex items-center">
-                                        MCQ <SortDropdown columnKey="mcq" />
-                                    </div>
-                                </th>
-                                <th className="px-4 py-3 whitespace-nowrap">
-                                    <div className="flex items-center">
-                                        Max Level <SortDropdown columnKey="maxLevel" />
-                                    </div>
-                                </th>
-                                <th className="px-4 py-3 whitespace-nowrap">
-                                    <div className="flex items-center">
-                                        Closing Stock <SortDropdown columnKey="closingStock" />
-                                    </div>
-                                </th>
-                                <th className="px-4 py-3 whitespace-nowrap">
-                                    <div className="flex items-center">
-                                        Reorder Qty <SortDropdown columnKey="reorderQty" />
-                                    </div>
-                                </th>
+                                <th 
+                                className="px-4 py-3 whitespace-nowrap cursor-pointer hover:bg-sky-100 transition-colors select-none"
+                                onClick={() => toggleSort("serial")}
+                            >
+                                <div className="flex items-center">
+                                    Serial NO <SortDropdown columnKey="serial" />
+                                </div>
+                            </th>
+                                <th 
+                                className="px-4 py-3 whitespace-nowrap cursor-pointer hover:bg-sky-100 transition-colors select-none"
+                                onClick={() => toggleSort("sku")}
+                            >
+                                <div className="flex items-center">
+                                    SKU Code <SortDropdown columnKey="sku" />
+                                </div>
+                            </th>
+                                <th 
+                                className="px-4 py-3 whitespace-nowrap cursor-pointer hover:bg-sky-100 transition-colors select-none"
+                                onClick={() => toggleSort("name")}
+                            >
+                                <div className="flex items-center">
+                                    Item Name <SortDropdown columnKey="name" />
+                                </div>
+                            </th>
+                                <th 
+                                className="px-4 py-3 whitespace-nowrap cursor-pointer hover:bg-sky-100 transition-colors select-none"
+                                onClick={() => toggleSort("unit")}
+                            >
+                                <div className="flex items-center">
+                                    Unit <SortDropdown columnKey="unit" />
+                                </div>
+                            </th>
+                                <th 
+                                className="px-4 py-3 whitespace-nowrap cursor-pointer hover:bg-sky-100 transition-colors select-none"
+                                onClick={() => toggleSort("mcq")}
+                            >
+                                <div className="flex items-center">
+                                    MCQ <SortDropdown columnKey="mcq" />
+                                </div>
+                            </th>
+                                <th 
+                                className="px-4 py-3 whitespace-nowrap cursor-pointer hover:bg-sky-100 transition-colors select-none"
+                                onClick={() => toggleSort("maxLevel")}
+                            >
+                                <div className="flex items-center">
+                                    Max Level <SortDropdown columnKey="maxLevel" />
+                                </div>
+                            </th>
+                                <th 
+                                className="px-4 py-3 whitespace-nowrap cursor-pointer hover:bg-sky-100 transition-colors select-none"
+                                onClick={() => toggleSort("closingStock")}
+                            >
+                                <div className="flex items-center">
+                                    Closing Stock <SortDropdown columnKey="closingStock" />
+                                </div>
+                            </th>
+                                <th 
+                                className="px-4 py-3 whitespace-nowrap cursor-pointer hover:bg-sky-100 transition-colors select-none"
+                                onClick={() => toggleSort("reorderQty")}
+                            >
+                                <div className="flex items-center">
+                                    Reorder Qty <SortDropdown columnKey="reorderQty" />
+                                </div>
+                            </th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-sky-50">

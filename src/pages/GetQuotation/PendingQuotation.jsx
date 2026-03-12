@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Box, FileText } from 'lucide-react';
 import QuotationForm from './QuotationForm';
 
-const PendingQuotation = ({ indents, onProcess, SortDropdown }) => {
+const PendingQuotation = ({ indents, onProcess, SortDropdown, onSort }) => {
     const [selectedIndent, setSelectedIndent] = useState(null);
 
     return (
@@ -13,42 +13,66 @@ const PendingQuotation = ({ indents, onProcess, SortDropdown }) => {
                     <thead className="bg-sky-50 text-sky-700 font-medium border-b border-sky-100 sticky top-0 z-10">
                         <tr>
                             <th className="px-4 py-3 text-center whitespace-nowrap">Action</th>
-                            <th className="px-4 py-3 whitespace-nowrap">
+                            <th 
+                                className="px-4 py-3 whitespace-nowrap cursor-pointer hover:bg-sky-100 transition-colors select-none"
+                                onClick={() => onSort("serialNo")}
+                            >
                                 <div className="flex items-center">
                                     Serial No <SortDropdown columnKey="serialNo" />
                                 </div>
                             </th>
-                            <th className="px-4 py-3 whitespace-nowrap">
+                            <th 
+                                className="px-4 py-3 whitespace-nowrap cursor-pointer hover:bg-sky-100 transition-colors select-none"
+                                onClick={() => onSort("sku")}
+                            >
                                 <div className="flex items-center">
                                     SKU Code <SortDropdown columnKey="sku" />
                                 </div>
                             </th>
-                            <th className="px-4 py-3 whitespace-nowrap">
+                            <th 
+                                className="px-4 py-3 whitespace-nowrap cursor-pointer hover:bg-sky-100 transition-colors select-none"
+                                onClick={() => onSort("name")}
+                            >
                                 <div className="flex items-center">
                                     Item Name <SortDropdown columnKey="name" />
                                 </div>
                             </th>
-                            <th className="px-4 py-3 whitespace-nowrap">
+                            <th 
+                                className="px-4 py-3 whitespace-nowrap cursor-pointer hover:bg-sky-100 transition-colors select-none"
+                                onClick={() => onSort("unit")}
+                            >
                                 <div className="flex items-center">
                                     Unit <SortDropdown columnKey="unit" />
                                 </div>
                             </th>
-                            <th className="px-4 py-3 whitespace-nowrap">
+                            <th 
+                                className="px-4 py-3 whitespace-nowrap cursor-pointer hover:bg-sky-100 transition-colors select-none"
+                                onClick={() => onSort("mcq")}
+                            >
                                 <div className="flex items-center">
                                     MCQ <SortDropdown columnKey="mcq" />
                                 </div>
                             </th>
-                            <th className="px-4 py-3 whitespace-nowrap">
+                            <th 
+                                className="px-4 py-3 whitespace-nowrap cursor-pointer hover:bg-sky-100 transition-colors select-none"
+                                onClick={() => onSort("maxLevel")}
+                            >
                                 <div className="flex items-center">
                                     Max Level <SortDropdown columnKey="maxLevel" />
                                 </div>
                             </th>
-                            <th className="px-4 py-3 whitespace-nowrap">
+                            <th 
+                                className="px-4 py-3 whitespace-nowrap cursor-pointer hover:bg-sky-100 transition-colors select-none"
+                                onClick={() => onSort("closingStock")}
+                            >
                                 <div className="flex items-center">
                                     Closing Stock <SortDropdown columnKey="closingStock" />
                                 </div>
                             </th>
-                            <th className="px-4 py-3 whitespace-nowrap">
+                            <th 
+                                className="px-4 py-3 whitespace-nowrap cursor-pointer hover:bg-sky-100 transition-colors select-none"
+                                onClick={() => onSort("reorderQty")}
+                            >
                                 <div className="flex items-center">
                                     Reorder Qty <SortDropdown columnKey="reorderQty" />
                                 </div>
