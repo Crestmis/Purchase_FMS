@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Box, ShieldCheck } from 'lucide-react';
 import QuotationApprovalForm from './QuotationApprovalForm';
 
-const PendingQuotationApproval = ({ indents, onProcess }) => {
+const PendingQuotationApproval = ({ indents, onProcess, SortDropdown }) => {
     const [selectedIndent, setSelectedIndent] = useState(null);
 
     return (
@@ -13,13 +13,41 @@ const PendingQuotationApproval = ({ indents, onProcess }) => {
                     <thead className="bg-sky-50 text-sky-700 font-medium border-b border-sky-100 sticky top-0 z-10">
                         <tr>
                             <th className="px-4 py-3 text-center whitespace-nowrap">Action</th>
-                            <th className="px-4 py-3 whitespace-nowrap">Serial No</th>
-                            <th className="px-4 py-3 whitespace-nowrap">Vendor</th>
-                            <th className="px-4 py-3 whitespace-nowrap">Quote (₹)</th>
-                            <th className="px-4 py-3 whitespace-nowrap">Lead Time</th>
-                            <th className="px-4 py-3 whitespace-nowrap">SKU Code</th>
-                            <th className="px-4 py-3 whitespace-nowrap">Item Name</th>
-                            <th className="px-4 py-3 whitespace-nowrap">Reorder Qty</th>
+                            <th className="px-4 py-3 whitespace-nowrap">
+                                <div className="flex items-center">
+                                    Serial No <SortDropdown columnKey="serialNo" />
+                                </div>
+                            </th>
+                            <th className="px-4 py-3 whitespace-nowrap">
+                                <div className="flex items-center">
+                                    Vendor <SortDropdown columnKey="vendorName" />
+                                </div>
+                            </th>
+                            <th className="px-4 py-3 whitespace-nowrap">
+                                <div className="flex items-center">
+                                    Quote (₹) <SortDropdown columnKey="quotedPrice" />
+                                </div>
+                            </th>
+                            <th className="px-4 py-3 whitespace-nowrap">
+                                <div className="flex items-center">
+                                    Lead Time <SortDropdown columnKey="leadTime" />
+                                </div>
+                            </th>
+                            <th className="px-4 py-3 whitespace-nowrap">
+                                <div className="flex items-center">
+                                    SKU Code <SortDropdown columnKey="sku" />
+                                </div>
+                            </th>
+                            <th className="px-4 py-3 whitespace-nowrap">
+                                <div className="flex items-center">
+                                    Item Name <SortDropdown columnKey="name" />
+                                </div>
+                            </th>
+                            <th className="px-4 py-3 whitespace-nowrap">
+                                <div className="flex items-center">
+                                    Reorder Qty <SortDropdown columnKey="reorderQty" />
+                                </div>
+                            </th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-sky-50">

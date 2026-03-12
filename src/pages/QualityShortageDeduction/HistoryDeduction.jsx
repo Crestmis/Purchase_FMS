@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, CheckCircle } from 'lucide-react';
 
-const HistoryDeduction = ({ indents }) => {
+const HistoryDeduction = ({ indents, SortDropdown }) => {
     return (
         <div className="flex-1 bg-white/90 backdrop-blur-sm border border-sky-100 rounded-2xl shadow-lg overflow-hidden flex flex-col">
             {/* Desktop Table View */}
@@ -9,14 +9,46 @@ const HistoryDeduction = ({ indents }) => {
                 <table className="w-full text-sm text-left">
                     <thead className="bg-sky-50 text-sky-700 font-medium border-b border-sky-100 sticky top-0 z-10">
                         <tr>
-                            <th className="px-4 py-3 whitespace-nowrap">Deduction Status</th>
-                            <th className="px-4 py-3 whitespace-nowrap">Shortage Qty</th>
-                            <th className="px-4 py-3 whitespace-nowrap">Deduction Amt</th>
-                            <th className="px-4 py-3 whitespace-nowrap">Invoice No</th>
-                            <th className="px-4 py-3 whitespace-nowrap">Serial No</th>
-                            <th className="px-4 py-3 whitespace-nowrap">Vendor</th>
-                            <th className="px-4 py-3 whitespace-nowrap">SKU Code</th>
-                            <th className="px-4 py-3 text-right">Net Qty</th>
+                            <th className="px-4 py-3 whitespace-nowrap">
+                                <div className="flex items-center">
+                                    Deduction Status <SortDropdown columnKey="remittanceStatus" />
+                                </div>
+                            </th>
+                            <th className="px-4 py-3 whitespace-nowrap">
+                                <div className="flex items-center">
+                                    Shortage Qty <SortDropdown columnKey="shortageQty" />
+                                </div>
+                            </th>
+                            <th className="px-4 py-3 whitespace-nowrap">
+                                <div className="flex items-center">
+                                    Deduction Amt <SortDropdown columnKey="deductionAmount" />
+                                </div>
+                            </th>
+                            <th className="px-4 py-3 whitespace-nowrap">
+                                <div className="flex items-center">
+                                    Invoice No <SortDropdown columnKey="invoiceNo" />
+                                </div>
+                            </th>
+                            <th className="px-4 py-3 whitespace-nowrap">
+                                <div className="flex items-center">
+                                    Serial No <SortDropdown columnKey="serialNo" />
+                                </div>
+                            </th>
+                            <th className="px-4 py-3 whitespace-nowrap">
+                                <div className="flex items-center">
+                                    Vendor <SortDropdown columnKey="vendorName" />
+                                </div>
+                            </th>
+                            <th className="px-4 py-3 whitespace-nowrap">
+                                <div className="flex items-center">
+                                    SKU Code <SortDropdown columnKey="sku" />
+                                </div>
+                            </th>
+                            <th className="px-4 py-3 text-right">
+                                <div className="flex items-center justify-end">
+                                    Net Qty {/* Sorting derived values might be complex, so keeping it generic or using unloadedQty */}
+                                </div>
+                            </th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-sky-50">

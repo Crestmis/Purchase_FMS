@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Box, Landmark } from 'lucide-react';
 import AccountsReportingForm from './AccountsReportingForm';
 
-const PendingAccountsReporting = ({ indents, onProcess }) => {
+const PendingAccountsReporting = ({ indents, onProcess, SortDropdown }) => {
     const [selectedIndent, setSelectedIndent] = useState(null);
 
     return (
@@ -13,12 +13,36 @@ const PendingAccountsReporting = ({ indents, onProcess }) => {
                     <thead className="bg-sky-50 text-sky-700 font-medium border-b border-sky-100 sticky top-0 z-10">
                         <tr>
                             <th className="px-4 py-3 text-center whitespace-nowrap">Action</th>
-                            <th className="px-4 py-3 whitespace-nowrap">Serial No</th>
-                            <th className="px-4 py-3 whitespace-nowrap">Invoice No</th>
-                            <th className="px-4 py-3 whitespace-nowrap">Vendor</th>
-                            <th className="px-4 py-3 whitespace-nowrap">SKU Code</th>
-                            <th className="px-4 py-3 whitespace-nowrap">Item Name</th>
-                            <th className="px-4 py-3 whitespace-nowrap">Unloaded Qty</th>
+                            <th className="px-4 py-3 whitespace-nowrap">
+                                <div className="flex items-center">
+                                    Serial No <SortDropdown columnKey="serialNo" />
+                                </div>
+                            </th>
+                            <th className="px-4 py-3 whitespace-nowrap">
+                                <div className="flex items-center">
+                                    Invoice No <SortDropdown columnKey="invoiceNo" />
+                                </div>
+                            </th>
+                            <th className="px-4 py-3 whitespace-nowrap">
+                                <div className="flex items-center">
+                                    Vendor <SortDropdown columnKey="vendorName" />
+                                </div>
+                            </th>
+                            <th className="px-4 py-3 whitespace-nowrap">
+                                <div className="flex items-center">
+                                    SKU Code <SortDropdown columnKey="sku" />
+                                </div>
+                            </th>
+                            <th className="px-4 py-3 whitespace-nowrap">
+                                <div className="flex items-center">
+                                    Item Name <SortDropdown columnKey="name" />
+                                </div>
+                            </th>
+                            <th className="px-4 py-3 whitespace-nowrap">
+                                <div className="flex items-center">
+                                    Unloaded Qty <SortDropdown columnKey="unloadedQty" />
+                                </div>
+                            </th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-sky-50">

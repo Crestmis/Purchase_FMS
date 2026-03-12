@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ShoppingCart, X, Save, Search, Box, Filter } from 'lucide-react';
+import { ShoppingCart, X, Save, Search, Box, Filter, ChevronDown, ArrowUp, ArrowDown } from 'lucide-react';
 
 import IMSOrderForm from './IMSOrderForm';
 
@@ -21,8 +21,12 @@ const IMS = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [stockFilter, setStockFilter] = useState('All');
     const [unitFilter, setUnitFilter] = useState('All');
+    const [itemNameFilter, setItemNameFilter] = useState('All');
+    const [skuFilter, setSkuFilter] = useState('All');
+    const [maxLevelFilter, setMaxLevelFilter] = useState('All');
     const [showModal, setShowModal] = useState(false);
     const [formData, setFormData] = useState(null);
+    const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
 
     useEffect(() => {
         // Load initial dummy data if none exists
@@ -114,12 +118,54 @@ const IMS = () => {
                                    (stockFilter === 'Normal' && !isLowStock);
                                    
         const matchesUnitFilter = unitFilter === 'All' || item.unit === unitFilter;
+        const matchesItemNameFilter = itemNameFilter === 'All' || item.name === itemNameFilter;
+        const matchesSkuFilter = skuFilter === 'All' || item.sku === skuFilter;
+        const matchesMaxLevelFilter = maxLevelFilter === 'All' || String(item.maxLevel) === maxLevelFilter;
                               
-        return matchesSearch && matchesStockFilter && matchesUnitFilter;
+        return matchesSearch && matchesStockFilter && matchesUnitFilter && matchesItemNameFilter && matchesSkuFilter && matchesMaxLevelFilter;
     });
 
-    // Extract unique units for the filter dropdown
-    const uniqueUnits = [...new Set(imsData.map(item => item.unit))];
+    // Extract unique values for the filter dropdowns
+    const uniqueUnits = [...new Set(imsData.map(item => item.unit))].sort();
+    const uniqueNames = [...new Set(imsData.map(item => item.name))].sort();
+    const uniqueSkus = [...new Set(imsData.map(item => item.sku))].sort();
+    const uniqueMaxLevels = [...new Set(imsData.map(item => item.maxLevel))].sort((a, b) => a - b);
+
+    const handleSort = (key, direction) => {
+        setSortConfig({ key, direction });
+    };
+
+    const sortedData = [...filteredData].sort((a, b) => {
+        if (!sortConfig.key) return 0;
+        const aValue = a[sortConfig.key];
+        const bValue = b[sortConfig.key];
+
+        if (aValue < bValue) return sortConfig.direction === 'asc' ? -1 : 1;
+        if (aValue > bValue) return sortConfig.direction === 'asc' ? 1 : -1;
+        return 0;
+    });
+
+    const SortDropdown = ({ columnKey }) => (
+        <div className="relative group inline-block ml-1">
+            <button className="p-0.5 hover:bg-sky-200 rounded transition-colors text-sky-600">
+                <ChevronDown size={14} />
+            </button>
+            <div className="absolute left-0 top-full mt-1 hidden group-hover:block bg-white border border-sky-100 rounded-lg shadow-xl z-20 min-w-[120px] overflow-hidden">
+                <button 
+                    onClick={() => handleSort(columnKey, 'asc')}
+                    className="w-full text-left px-3 py-2 hover:bg-sky-50 text-[10px] font-bold uppercase tracking-wider text-slate-600 flex items-center gap-2"
+                >
+                    <ArrowUp size={12} className="text-sky-500" /> Ascending
+                </button>
+                <button 
+                    onClick={() => handleSort(columnKey, 'desc')}
+                    className="w-full text-left px-3 py-2 hover:bg-sky-50 text-[10px] font-bold uppercase tracking-wider text-slate-600 flex items-center gap-2"
+                >
+                    <ArrowDown size={12} className="text-sky-500" /> Descending
+                </button>
+            </div>
+        </div>
+    );
 
     return (
         <div className="h-full flex flex-col p-4 lg:p-6 space-y-4">
@@ -138,7 +184,7 @@ const IMS = () => {
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
                         <input 
                             type="text" 
-                            placeholder="Search SKU or Item Name..." 
+                            placeholder="Search..." 
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             className="w-full pl-9 pr-4 py-2 bg-sky-50 border border-sky-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20"
@@ -147,11 +193,64 @@ const IMS = () => {
                     
                     <div className="relative shrink-0">
                         <select
+                            value={itemNameFilter}
+                            onChange={(e) => setItemNameFilter(e.target.value)}
+                            className="appearance-none pl-9 pr-8 py-2 bg-white border border-sky-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 text-slate-600 font-medium cursor-pointer hover:bg-sky-50 transition-colors shadow-sm w-full sm:w-40"
+                        >
+                            <option value="All">Item Name: All</option>
+                            {uniqueNames.map(name => (
+                                <option key={name} value={name}>{name}</option>
+                            ))}
+                        </select>
+                        <Filter className="absolute left-3 top-1/2 -translate-y-1/2 text-sky-500" size={14} />
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
+                    </div>
+
+                    <div className="relative shrink-0">
+                        <select
+                            value={skuFilter}
+                            onChange={(e) => setSkuFilter(e.target.value)}
+                            className="appearance-none pl-9 pr-8 py-2 bg-white border border-sky-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 text-slate-600 font-medium cursor-pointer hover:bg-sky-50 transition-colors shadow-sm w-full sm:w-32"
+                        >
+                            <option value="All">SKU: All</option>
+                            {uniqueSkus.map(sku => (
+                                <option key={sku} value={sku}>{sku}</option>
+                            ))}
+                        </select>
+                        <Box className="absolute left-3 top-1/2 -translate-y-1/2 text-sky-500" size={14} />
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
+                    </div>
+
+                    <div className="relative shrink-0">
+                        <select
+                            value={maxLevelFilter}
+                            onChange={(e) => setMaxLevelFilter(e.target.value)}
+                            className="appearance-none pl-9 pr-8 py-2 bg-white border border-sky-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 text-slate-600 font-medium cursor-pointer hover:bg-sky-50 transition-colors shadow-sm w-full sm:w-32"
+                        >
+                            <option value="All">Max: All</option>
+                            {uniqueMaxLevels.map(level => (
+                                <option key={level} value={level}>{level}</option>
+                            ))}
+                        </select>
+                        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-sky-500 flex items-center justify-center font-bold text-[10px] w-4 h-4 border border-sky-500 rounded-full">
+                            M
+                        </div>
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
+                    </div>
+                    
+                    <div className="relative shrink-0">
+                        <select
                             value={stockFilter}
                             onChange={(e) => setStockFilter(e.target.value)}
                             className="appearance-none pl-9 pr-8 py-2 bg-white border border-sky-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 text-slate-600 font-medium cursor-pointer hover:bg-sky-50 transition-colors shadow-sm"
                         >
-                            <option value="All">All Stock</option>
+                            <option value="All">Stock: All</option>
                             <option value="Low">Low Stock</option>
                             <option value="Normal">Normal Stock</option>
                         </select>
@@ -167,7 +266,7 @@ const IMS = () => {
                             onChange={(e) => setUnitFilter(e.target.value)}
                             className="appearance-none pl-9 pr-8 py-2 bg-white border border-sky-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 text-slate-600 font-medium cursor-pointer hover:bg-sky-50 transition-colors shadow-sm"
                         >
-                            <option value="All">All Units</option>
+                            <option value="All">Unit: All</option>
                             {uniqueUnits.map(unit => (
                                 <option key={unit} value={unit}>{unit}</option>
                             ))}
@@ -188,20 +287,61 @@ const IMS = () => {
                     <table className="w-full text-sm text-left">
                         <thead className="bg-sky-50 text-sky-700 font-medium border-b border-sky-100 sticky top-0 z-10">
                             <tr>
-                                <th className="px-4 py-3 whitespace-nowrap">Serial NO</th>
-                                <th className="px-4 py-3 whitespace-nowrap">SKU Code</th>
-                                <th className="px-4 py-3 whitespace-nowrap">Item Name</th>
-                                <th className="px-4 py-3 whitespace-nowrap">Unit</th>
-                                <th className="px-4 py-3 whitespace-nowrap">MCQ</th>
-                                <th className="px-4 py-3 whitespace-nowrap">Max Level</th>
-                                <th className="px-4 py-3 whitespace-nowrap">Closing Stock</th>
-                                <th className="px-4 py-3 whitespace-nowrap">Reorder Qty</th>
                                 <th className="px-4 py-3 text-center whitespace-nowrap">Action</th>
+                                <th className="px-4 py-3 whitespace-nowrap">
+                                    <div className="flex items-center">
+                                        Serial NO <SortDropdown columnKey="serial" />
+                                    </div>
+                                </th>
+                                <th className="px-4 py-3 whitespace-nowrap">
+                                    <div className="flex items-center">
+                                        SKU Code <SortDropdown columnKey="sku" />
+                                    </div>
+                                </th>
+                                <th className="px-4 py-3 whitespace-nowrap">
+                                    <div className="flex items-center">
+                                        Item Name <SortDropdown columnKey="name" />
+                                    </div>
+                                </th>
+                                <th className="px-4 py-3 whitespace-nowrap">
+                                    <div className="flex items-center">
+                                        Unit <SortDropdown columnKey="unit" />
+                                    </div>
+                                </th>
+                                <th className="px-4 py-3 whitespace-nowrap">
+                                    <div className="flex items-center">
+                                        MCQ <SortDropdown columnKey="mcq" />
+                                    </div>
+                                </th>
+                                <th className="px-4 py-3 whitespace-nowrap">
+                                    <div className="flex items-center">
+                                        Max Level <SortDropdown columnKey="maxLevel" />
+                                    </div>
+                                </th>
+                                <th className="px-4 py-3 whitespace-nowrap">
+                                    <div className="flex items-center">
+                                        Closing Stock <SortDropdown columnKey="closingStock" />
+                                    </div>
+                                </th>
+                                <th className="px-4 py-3 whitespace-nowrap">
+                                    <div className="flex items-center">
+                                        Reorder Qty <SortDropdown columnKey="reorderQty" />
+                                    </div>
+                                </th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-sky-50">
-                            {filteredData.map((item) => (
+                            {sortedData.map((item) => (
                                 <tr key={item.id} className="hover:bg-sky-50/50 transition-colors">
+                                    <td className="px-4 py-3 text-center">
+                                        <button 
+                                            onClick={() => handlePlaceOrder(item)}
+                                            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-sky-500 to-sky-400 text-white rounded-lg text-xs font-medium hover:shadow-lg shadow-sky-500/30 transition-all hover:-translate-y-0.5"
+                                        >
+                                            <ShoppingCart size={14} />
+                                            Place Order
+                                        </button>
+                                    </td>
                                     <td className="px-4 py-3 text-slate-600">{item.serial}</td>
                                     <td className="px-4 py-3 font-medium text-slate-800">{item.sku}</td>
                                     <td className="px-4 py-3 text-slate-600">{item.name}</td>
@@ -218,15 +358,6 @@ const IMS = () => {
                                         </span>
                                     </td>
                                     <td className="px-4 py-3 text-slate-600">{item.reorderQty}</td>
-                                    <td className="px-4 py-3 text-center">
-                                        <button 
-                                            onClick={() => handlePlaceOrder(item)}
-                                            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-sky-500 to-sky-400 text-white rounded-lg text-xs font-medium hover:shadow-lg shadow-sky-500/30 transition-all hover:-translate-y-0.5"
-                                        >
-                                            <ShoppingCart size={14} />
-                                            Place Order
-                                        </button>
-                                    </td>
                                 </tr>
                             ))}
                         </tbody>
@@ -242,7 +373,7 @@ const IMS = () => {
 
             {/* Mobile Card View */}
             <div className="lg:hidden flex-1 overflow-y-auto space-y-4 pb-4">
-                {filteredData.map((item) => (
+                {sortedData.map((item) => (
                     <div key={item.id} className="bg-white rounded-2xl border border-sky-100 shadow-sm p-4 space-y-4">
                         <div className="flex justify-between items-start border-b border-slate-50 pb-3">
                             <div>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ClipboardList, Clock, Landmark } from 'lucide-react';
+import { ClipboardList, Clock, Landmark, Search, Filter, ChevronDown, ArrowUp, ArrowDown } from 'lucide-react';
 import PendingAccountsReporting from './PendingAccountsReporting';
 import HistoryAccountsReporting from './HistoryAccountsReporting';
 
@@ -7,7 +7,11 @@ const DocumentReportingAccounts = () => {
     const [activeTab, setActiveTab] = useState('pending');
     const [pendingIndents, setPendingIndents] = useState([]);
     const [historyIndents, setHistoryIndents] = useState([]);
-
+    const [vendorFilter, setVendorFilter] = useState('All');
+    const [skuFilter, setSkuFilter] = useState('All');
+    const [itemNameFilter, setItemNameFilter] = useState('All');
+    const [searchTerm, setSearchTerm] = useState('');
+    const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
     useEffect(() => {
         // Mock data initialization for the Document Reporting to Accounts Flow
         const initializeAccountsSubmission = () => {
@@ -85,16 +89,144 @@ const DocumentReportingAccounts = () => {
         localStorage.setItem('crest_purchase_history_accounts', JSON.stringify(updatedHistory));
     };
 
+    const filterData = (data) => {
+        return data.filter(item => {
+            const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                                  item.sku.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                                  item.serialNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                                  (item.vendorName && item.vendorName.toLowerCase().includes(searchTerm.toLowerCase()));
+            const matchesVendorFilter = vendorFilter === 'All' || item.vendorName === vendorFilter;
+            const matchesSkuFilter = skuFilter === 'All' || item.sku === skuFilter;
+            const matchesItemNameFilter = itemNameFilter === 'All' || item.name === itemNameFilter;
+
+            return matchesSearch && matchesVendorFilter && matchesSkuFilter && matchesItemNameFilter;
+        });
+    };
+
+    const combinedData = [...pendingIndents, ...historyIndents];
+    const uniqueVendors = [...new Set(combinedData.map(item => item.vendorName).filter(Boolean))].sort();
+    const uniqueSkus = [...new Set(combinedData.map(item => item.sku))].sort();
+    const uniqueNames = [...new Set(combinedData.map(item => item.name))].sort();
+
+    const handleSort = (key, direction) => {
+        setSortConfig({ key, direction });
+    };
+
+    const sortData = (data) => {
+        return [...data].sort((a, b) => {
+            if (!sortConfig.key) return 0;
+            const aValue = a[sortConfig.key];
+            const bValue = b[sortConfig.key];
+
+            if (aValue < bValue) return sortConfig.direction === 'asc' ? -1 : 1;
+            if (aValue > bValue) return sortConfig.direction === 'asc' ? 1 : -1;
+            return 0;
+        });
+    };
+
+    const filteredPending = sortData(filterData(pendingIndents));
+    const filteredHistory = sortData(filterData(historyIndents));
+
+    const SortDropdown = ({ columnKey }) => (
+        <div className="relative group inline-block ml-1">
+            <button className="p-0.5 hover:bg-sky-200 rounded transition-colors text-sky-600">
+                <ChevronDown size={14} />
+            </button>
+            <div className="absolute left-0 top-full mt-1 hidden group-hover:block bg-white border border-sky-100 rounded-lg shadow-xl z-20 min-w-[120px] overflow-hidden text-sm">
+                <button 
+                    onClick={() => handleSort(columnKey, 'asc')}
+                    className="w-full text-left px-3 py-2 hover:bg-sky-50 text-[10px] font-bold uppercase tracking-wider text-slate-600 flex items-center gap-2"
+                >
+                    <ArrowUp size={12} className="text-sky-500" /> Ascending
+                </button>
+                <button 
+                    onClick={() => handleSort(columnKey, 'desc')}
+                    className="w-full text-left px-3 py-2 hover:bg-sky-50 text-[10px] font-bold uppercase tracking-wider text-slate-600 flex items-center gap-2"
+                >
+                    <ArrowDown size={12} className="text-sky-500" /> Descending
+                </button>
+            </div>
+        </div>
+    );
+
     return (
         <div className="h-full flex flex-col p-4 lg:p-6 space-y-4">
             {/* Header Area */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white/80 backdrop-blur-sm p-4 rounded-2xl border border-sky-100 shadow-sm">
-                <div>
+                <div className="flex-1">
                     <h1 className="text-xl font-bold text-slate-800 flex items-center gap-2">
                         <Landmark className="text-sky-500" />
                         Document Reporting to Accounts
                     </h1>
                     <p className="text-sm text-slate-500 mt-1">Submit physical invoices and unloading slips to the finance department</p>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-3 w-full lg:w-auto">
+                    <div className="relative w-full lg:w-48">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+                        <input 
+                            type="text" 
+                            placeholder="Search..." 
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="w-full pl-9 pr-4 py-2 bg-sky-50 border border-sky-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20"
+                        />
+                    </div>
+
+                    <div className="relative shrink-0">
+                        <select
+                            value={vendorFilter}
+                            onChange={(e) => setVendorFilter(e.target.value)}
+                            className="appearance-none pl-9 pr-8 py-2 bg-white border border-sky-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 text-slate-600 font-medium cursor-pointer hover:bg-sky-50 transition-colors shadow-sm w-full sm:w-40"
+                        >
+                            <option value="All">Vendor: All</option>
+                            {uniqueVendors.map(vendor => (
+                                <option key={vendor} value={vendor}>{vendor}</option>
+                            ))}
+                        </select>
+                        <Landmark className="absolute left-3 top-1/2 -translate-y-1/2 text-sky-500" size={14} />
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
+                    </div>
+
+                    <div className="relative shrink-0">
+                        <select
+                            value={skuFilter}
+                            onChange={(e) => setSkuFilter(e.target.value)}
+                            className="appearance-none pl-9 pr-8 py-2 bg-white border border-sky-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 text-slate-600 font-medium cursor-pointer hover:bg-sky-50 transition-colors shadow-sm w-full sm:w-32"
+                        >
+                            <option value="All">SKU: All</option>
+                            {uniqueSkus.map(sku => (
+                                <option key={sku} value={sku}>{sku}</option>
+                            ))}
+                        </select>
+                        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-sky-500 flex items-center justify-center font-bold text-[10px] w-4 h-4 border border-sky-500 rounded-full">
+                            S
+                        </div>
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
+                    </div>
+
+                    <div className="relative shrink-0">
+                        <select
+                            value={itemNameFilter}
+                            onChange={(e) => setItemNameFilter(e.target.value)}
+                            className="appearance-none pl-9 pr-8 py-2 bg-white border border-sky-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 text-slate-600 font-medium cursor-pointer hover:bg-sky-50 transition-colors shadow-sm w-full sm:w-40"
+                        >
+                            <option value="All">Item: All</option>
+                            {uniqueNames.map(name => (
+                                <option key={name} value={name}>{name}</option>
+                            ))}
+                        </select>
+                        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-sky-500 flex items-center justify-center font-bold text-[10px] w-4 h-4 border border-sky-500 rounded-full">
+                            I
+                        </div>
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
+                    </div>
                 </div>
                 
                 {/* Custom Tab Navigation */}
@@ -137,9 +269,9 @@ const DocumentReportingAccounts = () => {
             {/* Content Area */}
             <div className="flex-1 flex flex-col min-h-0 animate-in fade-in duration-300">
                 {activeTab === 'pending' ? (
-                    <PendingAccountsReporting indents={pendingIndents} onProcess={processIndent} />
+                    <PendingAccountsReporting indents={filteredPending} onProcess={processIndent} SortDropdown={SortDropdown} />
                 ) : (
-                    <HistoryAccountsReporting indents={historyIndents} />
+                    <HistoryAccountsReporting indents={filteredHistory} SortDropdown={SortDropdown} />
                 )}
             </div>
         </div>
